@@ -26,18 +26,14 @@ jobs:
           npm install axios
           node -e "
           const axios = require('axios');
-          axios.get('https://api.github.com/repos/nirmata/go-nctl/releases', {
+          axios.get('https://api.github.com/repos/nirmata/go-nctl/releases/latest', {
             headers: {
               Authorization: \`token \${process.env.TOKEN}\`,
               Accept: 'application/vnd.github+json'
             }
           }).then(response => {
             const releases = response.data;
-            if (releases.length > 0) {
-              console.log('Latest release:', releases[0]);
-            } else {
-              console.log('No releases found.');
-            }
+            console.log('Latest release:', releases);
           }).catch(err => {
             console.error('Error fetching releases:', err.response?.data || err);
           });
