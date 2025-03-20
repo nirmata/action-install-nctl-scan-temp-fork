@@ -26,23 +26,20 @@ jobs:
         env:
           TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          npm install axios
-          node -e "
-          const axios = require('axios');
-          axios.get('https://api.github.com/repos/nirmata/go-nctl/releases/latest', {
-            headers: {
-              Authorization: \`token \${process.env.TOKEN}\`,
-              Accept: 'application/vnd.github+json'
-            }
-          }).then(response => {
-            const tag_name = response.data.tag_name;
-            console.log('Latest release:', tag_name);
-            console.log(\"NEW_VERSION=${tag_name}\" >> process.env.GITHUB_ENV);
-          }).catch(err => {
-            console.error('Error fetching releases:', err.response?.data || err);
-            process.exit(1);
-          });
-          "
+          NEW_VERSION=$(curl -s -H "Authorization: token $TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/nirmata/go-nctl/releases/latest | jq -r '.tag_name')
+  
+          if [[ -z "$NEW_VERSION" || "$NEW_VERSION" == "null" ]]; then
+            echo "Failed to fetch latest release version."
+            exit 1
+          fi
+  
+          # Remove 'v' from NEW_VERSION if present
+          NEW_VERSION="${NEW_VERSION#v}"
+  
+          echo "Latest release: $NEW_VERSION"
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Read current version from action.yml
         id: current-version
