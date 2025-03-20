@@ -2,7 +2,7 @@ name: Run tests on staging
 on:
   push:
     branches:
-      - main
+      - *
 
 jobs:
   fetch-release:
@@ -38,4 +38,4 @@ jobs:
             console.error('Error fetching releases:', err.response?.data || err);
           });
           "
-          
+
