@@ -2,7 +2,8 @@ name: Run tests on staging
 on:
   push:
     branches:
-      - *
+      - main
+      - NDEV-21411
   workflow_dispatch:  # This enables manual triggering
 
 jobs:
