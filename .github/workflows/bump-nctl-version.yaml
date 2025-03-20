@@ -4,18 +4,20 @@ on:
     branches:
       - main
       - NDEV-21411
-  workflow_dispatch:  # This enables manual triggering
+  workflow_dispatch:
 
 jobs:
   fetch-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Create GitHub App token
+      - name: Create GitHub App token for go-nctl repository
         uses: actions/create-github-app-token@v1
         id: app-token
         with:
           app-id: ${{ vars.NCTL_VERSION_BUMPER_GITHUB_APP_ID }}
           private-key: ${{ secrets.NCTL_VERSION_BUMPER_GITHUB_APP_PVT_KEY }}
+          owner: nirmata
+          repository: go-nctl
           
       - name: Fetch latest go-nctl release
         env:
@@ -26,7 +28,7 @@ jobs:
           const axios = require('axios');
           axios.get('https://api.github.com/repos/nirmata/go-nctl/releases', {
             headers: {
-              Authorization: \`token \${{ steps.app-token.outputs.token }}\`,
+              Authorization: \`token \${process.env.TOKEN}\`,
               Accept: 'application/vnd.github+json'
             }
           }).then(response => {
@@ -40,4 +42,3 @@ jobs:
             console.error('Error fetching releases:', err.response?.data || err);
           });
           "
-
