@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - *
+  workflow_dispatch:  # This enables manual triggering
 
 jobs:
   fetch-release:
